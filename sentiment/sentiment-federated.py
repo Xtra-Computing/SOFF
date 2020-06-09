@@ -4,25 +4,24 @@ import sys
 import copy
 import argparse
 import pickle
-from scipy.optimize import newton
-from tensorflow_privacy.privacy.analysis import compute_dp_sgd_privacy
 
 #torch.manual_seed(0)
 
+argv = sys.argv
+def printHelp():
+    print("Usage: {}".format(argv[0]))
+
 parser = argparse.ArgumentParser(description='train with fedavg and dp')
-parser.add_argument('-E', '--epochs', default=10, type=int, help="Number of epochs")
+parser.add_argument('-E', '--epochs', default=30, type=float, help="Number of epochs")
 parser.add_argument('-d', '--data-dir', default="preprocessed_data", help="The directory storing preprocessed data")
-parser.add_argument('-e', '--epsilon', default=1.0, type=float, help="Privacy Budget")
-parser.add_argument('-b', '--batch-size', default = 40, type=int, help="How many record per batch")
-parser.add_argument('-l', '--batches-per-lot', default = 10, type=int, help="How many batches per lot")
-parser.add_argument('-n', '--no-noise', action='store_true')
+parser.add_argument('-b', '--batch-size', default = 200, type=int, help="How many record per batch")
+parser.add_argument('-a', '--average-every', default = 1, type=int, help="How many epochs per averaging")
 args = parser.parse_args()
 
 print(args)
 
 ## Parameters #################################################################
 learningRate = 0.001 # Learning Rate
-#learningRate = 1 # SGD test
 
 printEvery = 10
 savePath = "./trained-model"
@@ -91,67 +90,12 @@ print('    Amazon:  ')  # batch_size, seq_length
 print('        Sample input size:  ', sampleXAmazon.size())  # batch_size, seq_length
 print('        Sample label size:  ', sampleYAmazon.size())  # batch_size
 
-## DP Config ###################################################################
-
-clip = 0.1
-
-## Deprecated
-#
-# lotSize = args.batches_per_lot * args.batch_size# L
-# delta = 10**(-5)
-#
-# assert(trainXImdb.shape[0] == trainXAmazon.shape[0]) # otherwise we need two qs and Ts
-# lotsPerEpoch = trainXImdb.shape[0] / lotSize
-# q = lotSize / trainXImdb.shape[0]
-# T = args.epochs * lotsPerEpoch
-#
-# # sigma = np.sqrt(2 * np.log(1.25/delta))/args.epsilon # this is the sigma of strong composition
-# sigma = 2 * q * np.sqrt(T * np.log(1./delta)) / args.epsilon # this is the sigma of moment accountant
-
-assert(trainXImdb.shape[0] == trainXAmazon.shape[0]) # otherwise we need two qs and Ts
-
-lotSize = args.batches_per_lot * args.batch_size # L
-delta = min(10**(-5), 1/trainXImdb.shape[0])
-
-lotsPerEpoch = trainXImdb.shape[0]/ lotSize
-q = lotSize / trainXImdb.shape[0]
-T = args.epochs * lotsPerEpoch
-
-def compute_dp_sgd_wrapper(_sigma):
-    return compute_dp_sgd_privacy.compute_dp_sgd_privacy(
-            n=trainXImdb.shape[0],
-            batch_size=lotSize,
-            noise_multiplier=_sigma,
-            epochs=args.epochs,
-            delta=delta)[0] - args.epsilon
-sigma = newton(compute_dp_sgd_wrapper, 1)
-
-print('BpL={}, q={}, T={}, σ₁=σ₂={}'.format(args.batches_per_lot, q, T, sigma))
-print('actual epslion = {}'.format(
-    compute_dp_sgd_privacy.compute_dp_sgd_privacy(
-        n=trainXImdb.shape[0], batch_size=lotSize,
-        noise_multiplier=sigma,
-        epochs=args.epochs, delta=delta)))
-
-# using global variable
-_lastNoiseShape = None
-_noiseToAdd = None
-def gaussian_noise(grads):
-    global _lastNoiseShape
-    global _noiseToAdd
-    if grads.shape != _lastNoiseShape:
-        _lastNoiseShape = grads.shape
-        _noiseToAdd = torch.zeros(grads.shape).cuda()
-    _noiseToAdd.data.normal_(0.0, std = sigma * clip)
-    return _noiseToAdd
-
 ## Define Network #############################################################
 print("Defining Network ...")
 trainOnGpu = torch.cuda.is_available()
 print("    Traning on {}".format("GPU" if trainOnGpu else "CPU"))
 
 from torch import nn
-from torch.autograd import Variable
 
 class SentimentRNN(nn.Module):
     def __init__(self, vocabSize, outputSize, embeddingDim, hiddenDim, nLayers, dropProb = 0.5):
@@ -198,18 +142,6 @@ class SentimentRNN(nn.Module):
 
         return hidden
 
-
-    def clip_grad_to_bound(self):
-        for key, param in self.named_parameters():
-            param.grad /= n_batch
-            gradient_clip(param)
-
-    def add_gaussian_noise(self):
-        for key, param in self.named_parameters():
-            noise = 1/lotSize * gaussian_noise(param.grad)
-            param.grad += noise
-
-
 ## Instantiate Network ########################################################
 print("Instantiating Network ...")
 
@@ -226,6 +158,11 @@ net = SentimentRNN(vocabSize, outputSize, embeddingDim, hiddenDim, nLayers)
 netImdb   = SentimentRNN(vocabSize, outputSize, embeddingDim, hiddenDim, nLayers)
 netAmazon = SentimentRNN(vocabSize, outputSize, embeddingDim, hiddenDim, nLayers)
 
+totalSize = 0
+for _, val in net.named_parameters():
+    totalSize = totalSize + val.element_size() * val.nelement();
+
+print("Size of the model:", totalSize)
 
 ## Define Testing Function ####################################################
 def testNet():
@@ -261,10 +198,11 @@ criterion = nn.BCELoss()
 
 optimizerImdb = torch.optim.Adam(netImdb.parameters(), lr = learningRate)
 optimizerAmazon = torch.optim.Adam(netAmazon.parameters(), lr = learningRate)
-# lrSchedulerImdb = torch.optim.lr_scheduler.LambdaLR(optimizerImdb, lambda e: 1/(1+5*e))
-# lrSchedulerAmazon = torch.optim.lr_scheduler.LambdaLR(optimizerAmazon, lambda e: 1/(1+5*e))
+lrSchedulerImdb = torch.optim.lr_scheduler.LambdaLR(optimizerImdb, lambda e: 1/(1+5*e))
+lrSchedulerAmazon = torch.optim.lr_scheduler.LambdaLR(optimizerAmazon, lambda e: 1/(1+5*e))
 
 counter = 0
+clip = 5
 
 if trainOnGpu:
     net.cuda()
@@ -294,43 +232,29 @@ for e in range(args.epochs):
         # we'd backprop through the entire training history
         h = tuple([each.data for each in h])
 
+        # zero accumnulated grdients
+        netImdb.zero_grad()
+
         # get output, calcualte loss, perform backprop
         outputImdb, h = netImdb(inputsImdb, h)
         lossImdb = criterion(outputImdb.squeeze(), labelsImdb.float())
         lossImdb.backward()
 
         # `clip_grad_norm` prevents the exploding gradient problem
-        if counter % args.batches_per_lot == 0:
-#            if(counter / args.batches_per_lot == 5):
-#                for _, val in netImdb.named_parameters():
-#                    print("max:",torch.max(val.grad))
-#                    print("min:",torch.min(val.grad))
-
-            nn.utils.clip_grad_norm_(netImdb.parameters(), clip)
-            if not args.no_noise:
-                netImdb.add_gaussian_noise()
-            optimizerImdb.step()
-            netImdb.zero_grad()
+        nn.utils.clip_grad_norm_(netImdb.parameters(), clip)
+        optimizerImdb.step()
 
         # Update Amazon model ##################################################
         h = tuple([each.data for each in h])
+
+        netAmazon.zero_grad()
 
         outputAmazon, h = netAmazon(inputsAmazon, h)
         lossAmazon = criterion(outputAmazon.squeeze(), labelsAmazon.float())
         lossAmazon.backward()
 
-        if counter % args.batches_per_lot == 0:
-#            if(counter / args.batches_per_lot == 5):
-#                for _, val in netAmazon.named_parameters():
-#                    print("max:",torch.max(val.grad))
-#                    print("min:",torch.min(val.grad))
-#                exit(1);
-
-            nn.utils.clip_grad_norm_(netAmazon.parameters(), clip)
-            if not args.no_noise:
-                netAmazon.add_gaussian_noise()
-            optimizerAmazon.step()
-            netAmazon.zero_grad()
+        nn.utils.clip_grad_norm_(netAmazon.parameters(), clip)
+        optimizerAmazon.step()
 
         if counter % printEvery == 0:
             net.eval()
@@ -372,18 +296,20 @@ for e in range(args.epochs):
 
     # Average two model (to simluate fedavg) ###############################
     beta = 0.5
-    params1 = netImdb.named_parameters()
-    params2 = netAmazon.named_parameters()
-    dict_params2 = dict(params2)
-    for name1, param1 in params1:
-        if name1 in dict_params2:
-            dict_params2[name1].data.copy_(beta*param1.data + (1-beta)*dict_params2[name1].data)
-    net.load_state_dict(dict_params2)
+
+    if ((e + 1) % args.average_every) == 0:
+        params1 = netImdb.named_parameters()
+        params2 = netAmazon.named_parameters()
+        dict_params2 = dict(params2)
+        for name1, param1 in params1:
+            if name1 in dict_params2:
+                dict_params2[name1].data.copy_(beta*param1.data + (1-beta)*dict_params2[name1].data)
+        net.load_state_dict(dict_params2)
 
     # Test every epoch
     testNet()
-    # lrSchedulerImdb.step()
-    # lrSchedulerAmazon.step()
+    lrSchedulerImdb.step()
+    lrSchedulerAmazon.step()
 
 ## Save Model #################################################################
 torch.save(net.state_dict(), savePath)
