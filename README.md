@@ -69,7 +69,7 @@ Our model achieves the following performance on :
 | &nbsp;&nbsp; combined                             |      94.8%|
 | &nbsp;&nbsp; fedavg                               |      95.4%|
 | &nbsp;&nbsp; fedavg, with SMC                     |      95.8%|
-| --------------------------------------------------|-----------|
+
 | Vertical task name, data and setup                | MSE       |
 | --------------------------------------------------|-----------|
 | **Federated Recommendation**                      |           |
