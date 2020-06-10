@@ -2,16 +2,35 @@
 
 set -e  # exit on error
 
+mkdir -p data
+
 pushd data  # cd data
 
-# skip wget if the file exists
+# skip download if the file exists
 wget -nc http://www.nlpr.ia.ac.cn/databases/Download/Offline/CharData/Gnt1.1TrainPart1.zip
 wget -nc http://www.nlpr.ia.ac.cn/databases/Download/Offline/CharData/Gnt1.1TrainPart2.zip
 wget -nc http://www.nlpr.ia.ac.cn/databases/Download/Offline/CharData/Gnt1.1Test.zip
 wget -nc http://www.iapr-tc11.org/dataset/OR3C_DAS2010/v1.1/OR3C/offline/character.rar
 wget -nc https://www.rarlab.com/rar/rarlinux-x64-5.9.0.tar.gz
+
 mkdir -p character/trn
 mkdir -p character/tst
+
+system=`awk -F= '/^NAME/{print $2}' /etc/os-release`
+echo ${system}
+case "${system}" in
+    "\"CentOS Linux\"")
+            echo "CentOS System"
+            sudo yum -y install unzip
+            ;;
+    \""Ubuntu\"")
+            echo "Ubuntu System"
+            sudo apt-get -y install unzip
+            ;;
+    *)
+            echo "Not support this system."
+esac
+echo "Installed unzip"
 
 unzip Gnt1.1TrainPart1.zip -d Gnt1.1Train
 unzip Gnt1.1TrainPart2.zip -d Gnt1.1Train

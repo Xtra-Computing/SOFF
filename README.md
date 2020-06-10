@@ -18,6 +18,10 @@ To download the data required for training the model, please use these links:
 * Chinese Character Recognition:
     * [CASIA]()
     * [HIT]()
+    * Enter `chinese/` and run `bash preprocess.sh` to download and preprocess the datasets
+* Federated Recommendation:
+    * [MovieLens 1M]()
+    * Enter `movie/` and run `bash preprocess.sh` to download and preprocess the dataset
 
 ## Training
 
@@ -31,9 +35,12 @@ To reproduce the results in the paper, enter a subdirectory (e.g. `sentiment`), 
 | &nbsp;&nbsp; Differential privacy                                    |`./train_dp.sh`              |
 | &nbsp;&nbsp; Secure multiparty compuatation                          |`./train_smc.sh`             |
 | **Chinese Character Recognition**                                    |                             |
-<!--TODO-->
+| &nbsp;&nbsp; Improvement of federated averaging                      |`bash train_fedavg.sh`       |
+| &nbsp;&nbsp; Communication cost                                      |`bash train_comm_cost.sh`    |
+| &nbsp;&nbsp; Differential privacy                                    |`bash train_dp.sh`           |
+| &nbsp;&nbsp; Secure multiparty compuatation                          |`bash train_smc.sh`          |
 | **Federated Recommendation**                                         |                             |
-<!--TODO-->
+| &nbsp;&nbsp; Improvement of federated learning                       |`bash train.sh`              |
 
 ## Evaluation
 
@@ -49,7 +56,7 @@ You can download pretrained models here:
 
 Our model achieves the following performance on :
 
-| Task name, data and setup                         | Accuracy  |
+| Horizontal task name, data and setup              | Accuracy  |
 | --------------------------------------------------|-----------|
 | **Sentimen Analysis**                             |      85%  |
 | &nbsp;&nbsp; imdb                                 |           |
@@ -57,6 +64,14 @@ Our model achieves the following performance on :
 | &nbsp;&nbsp; fedavg                               |           |
 | &nbsp;&nbsp; fedavg, with SMC                     |           |
 | **Chinese Character Recognition**                 |           |
-<!--TODO-->
+| &nbsp;&nbsp; CASIA-HWDB1.1                        |      93.7%|
+| &nbsp;&nbsp; HIT-OR3C                             |      77.5%|
+| &nbsp;&nbsp; combined                             |      94.8%|
+| &nbsp;&nbsp; fedavg                               |      95.4%|
+| &nbsp;&nbsp; fedavg, with SMC                     |      95.8%|
+| --------------------------------------------------|-----------|
+| Vertical task name, data and setup                | MSE       |
+| --------------------------------------------------|-----------|
 | **Federated Recommendation**                      |           |
-<!--TODO-->
+| &nbsp;&nbsp; Rating                               |      0.755|
+| &nbsp;&nbsp; Rating + Auxiliary                   |      0.720|
