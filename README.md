@@ -27,9 +27,9 @@ To reproduce the results in the paper, enter a subdirectory (e.g. `sentiment`), 
 | -------------------------------------------------------------------- |-----------------------------|
 | **Sentimen Analysis**                                                |                             |
 | &nbsp;&nbsp; Improvement of federated averaging                      |`./train_fedavg.sh`          |
-| &nbsp;&nbsp; Communication cost                                      |`./train_comm_cost`          |
-| &nbsp;&nbsp; Differential privacy                                    |`./train_dp`                 |
-| &nbsp;&nbsp; Secure multiparty compuatation                          |`./train_smc`                |
+| &nbsp;&nbsp; Communication cost                                      |`./train_comm_cost.sh`       |
+| &nbsp;&nbsp; Differential privacy                                    |`./train_dp.sh`              |
+| &nbsp;&nbsp; Secure multiparty compuatation                          |`./train_smc.sh`             |
 | **Chinese Character Recognition**                                    |                             |
 <!--TODO-->
 | **Federated Recommendation**                                         |                             |
