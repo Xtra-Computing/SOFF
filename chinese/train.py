@@ -277,14 +277,15 @@ def fedavg():
 
 def train(epoch):
     global avged
-    if avged:
-        assert len(params[0]) == len(params[1])
-        for param_index in range(len(params[0])):
-            assert torch.equal(params[0][param_index], params[1][param_index])
-    else:
-        assert len(params[0]) == len(params[1])
-        for param_index in range(len(params[0])):
-            assert not torch.equal(params[0][param_index], params[1][param_index])
+    if args.setting == 'fedavg':
+        if avged:
+            assert len(params[0]) == len(params[1])
+            for param_index in range(len(params[0])):
+                assert torch.equal(params[0][param_index], params[1][param_index])
+        else:
+            assert len(params[0]) == len(params[1])
+            for param_index in range(len(params[0])):
+                assert not torch.equal(params[0][param_index], params[1][param_index])
     
     for mod in models:
         mod.train()
@@ -342,14 +343,15 @@ min_loss = float('inf')
 wait = 0
 
 def val(epoch, loaders):
-    if avged:
-        assert len(params[0]) == len(params[1])
-        for param_index in range(len(params[0])):
-            assert torch.equal(params[0][param_index], params[1][param_index])
-    else:
-        assert len(params[0]) == len(params[1])
-        for param_index in range(len(params[0])):
-            assert not torch.equal(params[0][param_index], params[1][param_index])
+    if args.setting == 'fedavg':
+        if avged:
+            assert len(params[0]) == len(params[1])
+            for param_index in range(len(params[0])):
+                assert torch.equal(params[0][param_index], params[1][param_index])
+        else:
+            assert len(params[0]) == len(params[1])
+            for param_index in range(len(params[0])):
+                assert not torch.equal(params[0][param_index], params[1][param_index])
     
     assert loaders in [val_loaders, tst_loaders, trn_loaders]
 #     for mod in models:
