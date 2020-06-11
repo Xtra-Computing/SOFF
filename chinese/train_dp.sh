@@ -1,39 +1,22 @@
 #!/bin/bash
 
+mkdir -p result_dp result_dp_single
+
 # Epsilon-Accuracy
-python train.py --dp -e=0.03125 
-python train.py --dp -e=0.0625 
-python train.py --dp -e=0.125 
-python train.py --dp -e=0.25 
-python train.py --dp -e=0.5 
-python train.py --dp -e=1.0 
-python train.py --dp -e=2.0 
-python train.py --dp -e=4.0 
-python train.py --dp -e=6.4 
+for epsilon in 0.03125 0.0625 0.125 0.25 0.5 1.0 2.0 4.0 6.4; do
+    python -u ./train.py -E 10 --dp -e $epsilon | tee -a "./result_dp/epochs_10_batchsize_128_scaler_1_e_""$epsilon"
+done
 
 # Lotsize-Accuracy: fedavg
-python train.py --dp -e=2 --lotsize-scaler=0.1 
-python train.py --dp -e=2 --lotsize-scaler=1 
-python train.py --dp -e=2 --lotsize-scaler=3.1623 
-python train.py --dp -e=2 --lotsize-scaler=10 
-python train.py --dp -e=2 --lotsize-scaler=31.623 
-python train.py --dp -e=2 --lotsize-scaler=100 
-python train.py --dp -e=2 --lotsize-scaler=316.23 
+for scaler in 0.1 1 3.1623 10 31.623 100 316.23; do
+    python -u ./train.py -E 10 --lotsize-scaler $scaler --dp -e 2.0 | tee -a "./result_dp/epochs_10_batchsize_128_scaler_""$scaler""_e_2.0"
+done
 
-# Lotsize-Accuracy: party 0 (CASIA-HWDB1.1)
-python train.py --dp -e=2 --lotsize-scaler=0.1 --setting=0 
-python train.py --dp -e=2 --lotsize-scaler=1 --setting=0 
-python train.py --dp -e=2 --lotsize-scaler=3.1623 --setting=0 
-python train.py --dp -e=2 --lotsize-scaler=10 --setting=0 
-python train.py --dp -e=2 --lotsize-scaler=31.623 --setting=0 
-python train.py --dp -e=2 --lotsize-scaler=100 --setting=0 
-python train.py --dp -e=2 --lotsize-scaler=316.23 --setting=0 
-
-# Lotsize-Accuracy: party 1 (HIT-OR3C)
-python train.py --dp -e=2 --lotsize-scaler=0.1 --setting=1 
-python train.py --dp -e=2 --lotsize-scaler=1 --setting=1 
-python train.py --dp -e=2 --lotsize-scaler=3.1623 --setting=1 
-python train.py --dp -e=2 --lotsize-scaler=10 --setting=1 
-python train.py --dp -e=2 --lotsize-scaler=31.623 --setting=1 
-python train.py --dp -e=2 --lotsize-scaler=100 --setting=1 
-python train.py --dp -e=2 --lotsize-scaler=316.23 --setting=1 
+# Lotsize-Accuracy: single party
+# party 0 (CASIA-HWDB1.1)
+# party 1 (HIT-OR3C)
+for dataset in 0 1; do
+    for scaler in 0.1 1 3.1623 10 31.623 100 316.23; do
+        python -u ./train.py -E 10 --setting $dataset --lotsize-scaler $scaler --dp -e 2.0 | tee -a "./result_dp_single/""$dataset""_batchsize_128_scaler_""$scaler""_e_2.0"
+    done
+done

@@ -1,11 +1,7 @@
 #!/bin/bash
 
-# Communication cost
-python train.py --local-epochs=1 
-python train.py --local-epochs=2 
-python train.py --local-epochs=3 
-python train.py --local-epochs=4 
-python train.py --local-epochs=5 
-python train.py --local-epochs=6 
-python train.py --local-epochs=7 
-python train.py --local-epochs=8 
+mkdir -p result_comm_cost
+
+for avgInterval in 1 2 3 4 5 6 7 8; do
+    python -u ./train.py --local-epochs $avgInterval | tee -a "./result_comm_cost/result_fedavg_a_$avgInterval"
+done

@@ -10,10 +10,14 @@ To install requirements: enter a subdirectory (e.g. `sentiment`) and
 pip install -r requirements.txt
 ```
 
+To continue, make sure that `unzip` is already installed.
+
 To download and preproceess the data required for training the model, enter a subdirectory and run:
 ```preprocess
 bash preprocess.sh
 ```
+
+
 
 ## Training & Evaluation
 
@@ -226,7 +230,7 @@ Our model achieves the following performance.
         </tr>
         <tr>
             <td>without SMC</td>
-            <td></td>
+            <td>96.0%</td>
             <td>95.0%
             </td>
             <td>98.5% </td>
@@ -235,7 +239,7 @@ Our model achieves the following performance.
         </tr>
         <tr>
             <td>with SMC</td>
-            <td></td>
+            <td>95.8%</td>
             <td>94.8%
             </td>
             <td>98.2%
