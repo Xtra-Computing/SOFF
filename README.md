@@ -36,9 +36,9 @@ To reproduce the results in the paper, enter a subdirectory (e.g. `sentiment`), 
 | &nbsp;&nbsp; Differential privacy                                    |`bash train_dp.sh`           |
 | &nbsp;&nbsp; Secure multiparty compuatation                          |`bash train_smc.sh`          |
 | **Federated Recommendation**                                         |                             |
-| &nbsp;&nbsp; Improvement of federated learning                       |`bash train.sh`              |
+| &nbsp;&nbsp; Improvement of federated learning                       |`bash train_fed.sh`              |
 
-The model is automatically evaluated after training. You can find the logs in the `results_*/` directories.
+The model is automatically evaluated after training. You can find the logs in the `result_*/` directories.
 
 ## Results
 
