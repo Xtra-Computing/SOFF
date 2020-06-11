@@ -27,13 +27,13 @@ savePath = "./trained-model"
 
 ## Load Data ##################################################################
 print("Loading Data ...")
-with open('../data/imdb/imdb_text', 'r') as f:
+with open('./data/imdb/imdb_text', 'r') as f:
     reviewsImdb = f.read()
-with open('../data/imdb/imdb_score', 'r') as f:
+with open('./data/imdb/imdb_score', 'r') as f:
     labelsImdb = f.read()
-with open('../data/amazon/amazon_text_50000', 'r') as f:
+with open('./data/amazon/amazon_text_50000', 'r') as f:
     reviewsAmazon = f.read()
-with open('../data/amazon/amazon_score_50000', 'r') as f:
+with open('./data/amazon/amazon_score_50000', 'r') as f:
     labelsAmazon = f.read()
 
 #savePath += "-imdb"
