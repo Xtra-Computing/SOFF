@@ -1,11 +1,11 @@
 1. Please first download Equalizedface.tar.gz and test.tar.gz from website http://www.whdeng.cn/RFW/index.html and put the files in this folder.
 
+
 2. Run the commands
 tar zxvf Equalizedface.tar.gz
 python preprocess_equal.py
 # resize, transpose, and split images in equalizedface dataset into train, val set, and store images in h5 file.
 # Note that the images in folder Caucasian and Africa, which are used in our experiment, have already been aligned by the owner of the Equalizedface dataset. If you would like to use the images in Asian or Indian folder, you would need to run the code in mtcnn folder (code is adapted from https://github.com/YYuanAnyVision/mxnet_mtcnn_face_detection) to detect facial landmarks and perform similarity transformation (None of the images in Asian folder has been aligned, and 53651 images in Indian folder has been aligned, you can use file verify.py to see the statistics).
-
 
 tar zxvf test.tar.gz
 python preprocess_rfw.py
