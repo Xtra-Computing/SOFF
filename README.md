@@ -35,6 +35,16 @@ To reproduce the results in the paper, enter a subdirectory (e.g. `sentiment`), 
 | &nbsp;&nbsp; Communication cost                                      |`bash train_comm_cost.sh`    |
 | &nbsp;&nbsp; Differential privacy                                    |`bash train_dp.sh`           |
 | &nbsp;&nbsp; Secure multiparty compuatation                          |`bash train_smc.sh`          |
+| **Alphanumeric Character Recognition**                                    |                             |
+| &nbsp;&nbsp; Improvement of federated averaging                      |`bash train_fedavg.sh`       |
+| &nbsp;&nbsp; Communication cost                                      |`bash train_comm_cost.sh`    |
+| &nbsp;&nbsp; Differential privacy                                    |`bash train_dp.sh`           |
+| &nbsp;&nbsp; Secure multiparty compuatation                          |`bash train_smc.sh`          |
+| **Face Recognition**                                                 |                             |
+| &nbsp;&nbsp; Improvement of federated averaging                      |`bash train_fedavg.sh`       |
+| &nbsp;&nbsp; Communication cost                                      |`bash train_comm_cost.sh`    |
+| &nbsp;&nbsp; Differential privacy                                    |`bash train_dp.sh`           |
+| &nbsp;&nbsp; Secure multiparty compuatation                          |`bash train_smc.sh`          |
 | **Federated Recommendation**                                         |                             |
 | &nbsp;&nbsp; Improvement of federated learning                       |`bash train_fed.sh`              |
 
