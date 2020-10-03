@@ -129,7 +129,7 @@ tensorboard==1.15.0
 tensorboardX==1.6
 tensorflow==1.15.2
 tensorflow-estimator==1.15.1
-tensorflow-gpu==1.14.0
+tensorflow-gpu==1.15.4
 -e git+https://github.com/tensorflow/privacy@da9fb28b37535a66bb4092843c965f6e21667e2e#egg=tensorflow_privacy
 termcolor==1.1.0
 terminado==0.8.3
