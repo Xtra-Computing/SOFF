@@ -28,7 +28,7 @@ set_seed(seed)
 parser = argparse.ArgumentParser(description="Train a SplitNN with dcor loss")
 parser.add_argument("--setting", default="two", type=str, help="Training VFL setting")
 parser.add_argument("--epochs", default=30, type=int, help="Number of epochs to run for")
-parser.add_argument("--batch-size", default=32, type=int, help="Batch size")
+parser.add_argument("--batch-size", default=512, type=int, help="Batch size")
 parser.add_argument("--lr", default=1e-3, type=float, help="Starting learning rate")
 args = parser.parse_args()
 

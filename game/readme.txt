@@ -10,3 +10,4 @@ Note that we have uploaded the cleaned version of steam and ign data, so actuall
 2. Run the experiments
 python train_align.py --setting=one
 python train_align.py --setting=two
+python train_align_federated.py
