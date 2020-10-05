@@ -10,7 +10,7 @@ from tensorflow_privacy.privacy.analysis import compute_dp_sgd_privacy
 #torch.manual_seed(0)
 
 parser = argparse.ArgumentParser(description='train with fedavg and dp')
-parser.add_argument('-E', '--epochs', default=10, type=int, help="Number of epochs")
+parser.add_argument('-E', '--epochs', default=20, type=int, help="Number of epochs")
 parser.add_argument('-d', '--data-dir', default="preprocessed_data", help="The directory storing preprocessed data")
 parser.add_argument('-e', '--epsilon', default=1.0, type=float, help="Privacy Budget")
 parser.add_argument('-b', '--batch-size', default = 40, type=int, help="How many record per batch")
