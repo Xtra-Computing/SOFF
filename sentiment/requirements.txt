@@ -61,7 +61,7 @@ six==1.13.0
 syft==0.2.0a2
 tblib==1.6.0
 tensorboard==1.15.0
-tensorflow==1.15.0
+tensorflow==1.15.4
 tensorflow-estimator==1.15.1
 tensorflow-privacy==0.3.0
 termcolor==1.1.0
