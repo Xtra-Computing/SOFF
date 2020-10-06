@@ -127,7 +127,7 @@ syft-proto==0.2.5a1
 tblib==1.6.0
 tensorboard==1.15.0
 tensorboardX==1.6
-tensorflow==1.15.2
+tensorflow==1.15.4
 tensorflow-estimator==1.15.1
 tensorflow-gpu==1.14.0
 -e git+https://github.com/tensorflow/privacy@da9fb28b37535a66bb4092843c965f6e21667e2e#egg=tensorflow_privacy
