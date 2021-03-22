@@ -3,6 +3,7 @@
 wget -nc http://files.grouplens.org/datasets/movielens/ml-1m.zip
 unzip ml-1m.zip
 
+mkdir -p imdb
 pushd imdb
 
 wget -nc https://datasets.imdbws.com/name.basics.tsv.gz
