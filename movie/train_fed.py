@@ -34,18 +34,6 @@ from torchsummaryX import summary
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
-import tensorflow as tf
-from keras.layers import Input, Embedding, Concatenate, Flatten, Dense, Dot, Add, Multiply, Subtract, Average, Reshape
-from keras.models import Model
-from keras.callbacks import EarlyStopping
-from keras.backend.tensorflow_backend import set_session
-
-tf.set_random_seed(seed)
-config =  tf.ConfigProto()
-config.gpu_options.allow_growth = True
-sess =  tf.Session(config=config)
-set_session(sess)
-
 # Preprocess MovieLens-1M
 MOVIELENS_DIR = 'ml-1m'
 USER_DATA_FILE = 'users.dat'
