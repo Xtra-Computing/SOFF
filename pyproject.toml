@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "hatch-requirements-txt"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soff"
+description = "A Scalable and Open Federated Learning Framework"
+version = "0.0.1"
+requires-python = ">=3.9"
+dynamic = ["dependencies"]
+
+[tool.setuptools]
+packages = ["soff"]
+
+# load dependencies from requirements.txt
+[tool.hatch.metadata.hooks.requirements_txt]
+filename = "requirements.txt"
